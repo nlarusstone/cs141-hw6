@@ -81,7 +81,7 @@ function_codes = {
   "or": dec_to_bin(37, 6),
   "xor": dec_to_bin(38, 6),
   "nor": dec_to_bin(39, 6),
-  "slt" : dec_to_bin(42, 6),
+  "slt" : dec_to_bin(42, 6)
 }
 
 registers = {
@@ -116,7 +116,7 @@ registers = {
   '$gp' : dec_to_bin(28,5),
   '$sp' : dec_to_bin(29,5),
   '$fp' : dec_to_bin(30,5),
-  '$ra' : dec_to_bin(31,5),
+  '$ra' : dec_to_bin(31,5)
 }
 
 def main():

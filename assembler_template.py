@@ -74,8 +74,38 @@ function_codes = {
 }
 
 registers = {
-  '$zero' : dec_to_bin(00, 5),
-  # Fill out the rest of the registers.
+  '$zero' : dec_to_bin(0, 5),
+  '$at' : dec_to_bin(1,5),
+  '$v0' : dec_to_bin(2,5),
+  '$v1' : dec_to_bin(3,5),
+  '$a0' : dec_to_bin(4,5),
+  '$a1' : dec_to_bin(5,5),
+  '$a2' : dec_to_bin(6,5),
+  '$s3' : dec_to_bin(7,5),
+  '$t0' : dec_to_bin(8,5),
+  '$t1' : dec_to_bin(9,5),
+  '$t2' : dec_to_bin(10,5),
+  '$t3' : dec_to_bin(11,5),
+  '$t4' : dec_to_bin(12,5),
+  '$t5' : dec_to_bin(13,5),
+  '$t6' : dec_to_bin(14,5),
+  '$t7' : dec_to_bin(15,5),
+  '$s0' : dec_to_bin(16,5),
+  '$s1' : dec_to_bin(17,5),
+  '$s2' : dec_to_bin(18,5),
+  '$s3' : dec_to_bin(19,5),
+  '$s4' : dec_to_bin(20,5),
+  '$s5' : dec_to_bin(21,5),
+  '$s6' : dec_to_bin(22,5),
+  '$s7' : dec_to_bin(23,5),
+  '$t8' : dec_to_bin(24,5),
+  '$t9' : dec_to_bin(25,5),
+  '$k0' : dec_to_bin(26,5),
+  '$k1' : dec_to_bin(27,5),
+  '$gp' : dec_to_bin(28,5),
+  '$sp' : dec_to_bin(29,5),
+  '$fp' : dec_to_bin(30,5),
+  '$ra' : dec_to_bin(31,5),
 }
 
 def main():

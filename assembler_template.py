@@ -92,7 +92,7 @@ registers = {
   '$a0' : dec_to_bin(4,5),
   '$a1' : dec_to_bin(5,5),
   '$a2' : dec_to_bin(6,5),
-  '$s3' : dec_to_bin(7,5),
+  '$a3' : dec_to_bin(7,5),
   '$t0' : dec_to_bin(8,5),
   '$t1' : dec_to_bin(9,5),
   '$t2' : dec_to_bin(10,5),
@@ -128,24 +128,51 @@ def main():
   address = 0        # Track the current address of the instruction.
   line_count = 0     # Number of lines.
   for line in f:
-    line_count = line_count + 1
+    line_count += 1
 
     # Stores attributes about the current line of code, like its label, line
     # number, instruction, and arguments.
     line_attr = {}
 
+    line = line.replace(',', '')
+    split = line.split('#')[0].split()
     # Handle comments, whitespace.
 
     if line:
       # We'll get you started here with line_count.
       line_attr['line_number'] = line_count
 
+      if split[0] == 'nop':
+        line_attr['instruction'] = 'nop'
+        parsed_lines.append(line_attr)
+        address += 4
+        continue
+
       # Handle labels
       # Parse the rest of the instruction and its register arguments.
+      index = 0
+      if ':' in split[index]:
+        label = split[index][:-1]
+        labels[label] = address
+        line_attr['label'] = label
+        index += 1
+
+      line_attr['instruction'] = split[index]
+      index += 1
+      line_attr['arg0'] = split[index]
+      index += 1
+
+      if len(split) > index:
+        line_attr['arg1'] = split[index]
+        index += 1
+
+      if len(split) > index:
+        line_attr['arg2'] = split[index]
+        index += 1
 
       # Finally, add this dict to the complete list of instructions.
       parsed_lines.append(line_attr)
-      print line
+      address += 4
   f.close()
 
   machine = ""  # Current machine code word.
@@ -154,8 +181,29 @@ def main():
     if line['instruction'] == 'nop':
       print 8*'0'
     elif line['instruction'] in rtypes:
+      print line
       # Encode an R-type instruction.
-      print 'Not Implemented'
+      if line['instruction'] == 'sll' or line['instruction'] == 'sra' or line['instruction'] == 'srl':
+        print op_codes[line['instruction']]
+        print dec_to_bin(0, 5)
+        if line['arg1'] in registers:
+          print registers[line['arg1']]
+        else:
+          print dec_to_bin(line['arg1'], 5)
+        print registers[line['arg0']]
+        if line['arg2'] in registers:
+          print registers[line['arg2']]
+        else:
+          print dec_to_bin(line['arg2'], 5)
+        print function_codes[line['instruction']]
+      else:
+        print op_codes[line['instruction']]
+        print registers[line['arg1']]
+        print registers[line['arg2']]
+        print registers[line['arg0']]
+        print dec_to_bin(0, 5)
+        print function_codes[line['instruction']]
+
     else:
       # Encode a non-R-type instruction.
       # Hint: the function_codes map will be useful here.

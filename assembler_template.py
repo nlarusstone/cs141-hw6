@@ -44,44 +44,44 @@ rtypes = [
 
 op_codes = {
   # Fill in mapping from instruction to its opcode.
-  "add" : 
-  "addi" : dec_to_bin(8, 6)
-  "sub" :
-  "and" :
-  "andi" : int('0b001100')
-  "or" :
-  "ori" : int('0b001101')
-  "xor" :
-  "xori" : int('0b001110')
-  "nor" :
-  "sll" : int('0b000000')
-  "sra" :
-  "srl" :
-  "slt" :
-  "slti" : int('0b001010')
-  "beq" : int('0b000100')
-  "bne" : int('0b000101')
-  "j" : int('0b000010')
-  "jal" : int('0b000011')
-  "jr" :
-  "lw" : int('0b100011')
-  "sw" : int('0b101011')
-  "nop" : bin(0, 32)
+  "add" : dec_to_bin(0, 6),
+  "addi" : dec_to_bin(8, 6),
+  "sub" : dec_to_bin(0, 6),
+  "and" : dec_to_bin(0, 6),
+  "andi" : dec_to_bin(12, 6),
+  "or" : dec_to_bin(0, 6),
+  "ori" : dec_to_bin(13, 6),
+  "xor" : dec_to_bin(0, 6),
+  "xori" : dec_to_bin(14, 6),
+  "nor" : dec_to_bin(0, 6),
+  "sll" : dec_to_bin(0, 6),
+  "sra" : dec_to_bin(0, 6),
+  "srl" : dec_to_bin(0, 6),
+  "slt" : dec_to_bin(0, 6),
+  "slti" : dec_to_bin(10, 6),
+  "beq" : dec_to_bin(4, 6),
+  "bne" : dec_to_bin(5, 6),
+  "j" : dec_to_bin(2, 6),
+  "jal" : dec_to_bin(3, 6),
+  "jr" : dec_to_bin(0, 6),
+  "lw" : dec_to_bin(35, 6),
+  "sw" : dec_to_bin(43, 6),
+  "nop" : dec_to_bin(0, 32)
 }
 
 function_codes = {
   # Fill in function codes.
-  "sll",
-  "srl",
-  "sra",
-  "jr",
-  "add",
-  "sub",
-  "and",
-  "or",
-  "xor",
-  "nor",
-  "slt" : 
+  "sll": dec_to_bin(0, 6),
+  "srl": dec_to_bin(2, 6),
+  "sra": dec_to_bin(3, 6),
+  "jr": dec_to_bin(8, 6),
+  "add": dec_to_bin(32, 6),
+  "sub": dec_to_bin(34, 6),
+  "and": dec_to_bin(36, 6),
+  "or": dec_to_bin(37, 6),
+  "xor": dec_to_bin(38, 6),
+  "nor": dec_to_bin(39, 6),
+  "slt" : dec_to_bin(42, 6),
 }
 
 registers = {
@@ -100,8 +100,6 @@ def main():
   for line in f:
     line_count = line_count + 1
 
-    for attr in line.split():
-      if attr.
     # Stores attributes about the current line of code, like its label, line
     # number, instruction, and arguments.
     line_attr = {}
@@ -117,6 +115,7 @@ def main():
 
       # Finally, add this dict to the complete list of instructions.
       parsed_lines.append(line_attr)
+      print line
   f.close()
 
   machine = ""  # Current machine code word.

@@ -45,7 +45,7 @@ rtypes = [
 op_codes = {
   # Fill in mapping from instruction to its opcode.
   "add" : 
-  "addi" : int('0b001000')
+  "addi" : dec_to_bin(8, 6)
   "sub" :
   "and" :
   "andi" : int('0b001100')
@@ -66,11 +66,22 @@ op_codes = {
   "jr" :
   "lw" : int('0b100011')
   "sw" : int('0b101011')
-  "nop" : 0
+  "nop" : bin(0, 32)
 }
 
 function_codes = {
   # Fill in function codes.
+  "sll",
+  "srl",
+  "sra",
+  "jr",
+  "add",
+  "sub",
+  "and",
+  "or",
+  "xor",
+  "nor",
+  "slt" : 
 }
 
 registers = {

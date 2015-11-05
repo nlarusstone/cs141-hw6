@@ -98,6 +98,7 @@ function_codes = {
 
 registers = {
   '$zero' : dec_to_bin(0, 5),
+  '$r0' : dec_to_bin(0, 5),
   '$at' : dec_to_bin(1,5),
   '$v0' : dec_to_bin(2,5),
   '$v1' : dec_to_bin(3,5),
@@ -138,6 +139,7 @@ def main():
   labels = {}           # Map from label to its address.
   parsed_lines = []     # List of parsed instructions.
   address = 0x00400000  # Track the current address of the instruction.
+  strt_addr = 0x00400000
   line_count = 0        # Number of lines.
   for line in f:
     line_count += 1
@@ -219,31 +221,38 @@ def main():
       machine += function_codes[line['instruction']]
 
     elif line['instruction'] in itypes:
-      machine = '1'
+      machine += op_codes[line['instruction']]
+      if line['instruction'] == 'beq' or line['instruction'] == 'bne':
+        machine += registers[line['arg0']]
+        machine += registers[line['arg1']]
+
+        now = labels[line['arg2']]  - (strt_addr + (4 * line['line_number']))
+        machine += dec_to_bin(    now/4   , 16)
+      else:
+        if line['instruction'] == 'lw' or line['instruction'] == 'sw':
+          src = line['arg1'].replace(')', '').split('(')
+          machine += registers[src[1]]
+          machine += registers[line['arg0']]
+          machine += dec_to_bin(src[0], 16)
+        else:
+          machine += registers[line['arg1']]
+          machine += registers[line['arg0']]
+          machine += dec_to_bin(line['arg2'], 16)
+
     else:
       machine += op_codes[line['instruction']]
       # Encode a J-type instruction.
       if line['arg0'] in labels:
-        print 'JAL'
         addr = labels[line['arg0']]
-        machine = list('00' + dec_to_bin(addr, 32)[0:30])
-        for i in xrange(len(op_codes[line['instruction']])):
-          if op_codes[line['instruction']][i] == '1':
-            machine[i] = '1'
-        machine = "".join(machine)
+        machine += dec_to_bin(addr, 32)[4:30]
       elif line['arg0'] in registers:
         machine += registers[line['arg0']]
         machine += dec_to_bin(0, 21)
       else:
         machine += dec_to_bin(line['arg0'], 26)
 
-    print bin_to_hex(bin(int(machine, 2)))
+    out.write(bin_to_hex(bin(int(machine, 2))) + '\n')
   out.close()
-
-def sign_extend(num, bits):
-  for i in xrange(bits):
-    num = num[0] + num
-  return num
 
 if __name__ == "__main__":
   main()

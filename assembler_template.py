@@ -32,14 +32,26 @@ rtypes = [
   "sll",
   "srl",
   "sra",
-  "jr",
   "add",
   "sub",
   "and",
   "or",
   "xor",
   "nor",
+  "jr",
   "slt"
+]
+
+itypes = [
+  "addi",
+  "andi",
+  "ori",
+  "xori",
+  "slti",
+  "beq",
+  "bne",
+  "lw",
+  "sw"
 ]
 
 op_codes = {
@@ -123,10 +135,10 @@ def main():
   me, fname = sys.argv
 
   f = open(fname, "r")
-  labels = {}        # Map from label to its address.
-  parsed_lines = []  # List of parsed instructions.
-  address = 0        # Track the current address of the instruction.
-  line_count = 0     # Number of lines.
+  labels = {}           # Map from label to its address.
+  parsed_lines = []     # List of parsed instructions.
+  address = 0x00400000  # Track the current address of the instruction.
+  line_count = 0        # Number of lines.
   for line in f:
     line_count += 1
 
@@ -175,45 +187,60 @@ def main():
       address += 4
   f.close()
 
-  machine = ""  # Current machine code word.
-
+  out = open("output.machine", "w")
+  #machine = ""  # Current machine code word.
   for line in parsed_lines:
+    machine = ''
     if line['instruction'] == 'nop':
-      print 8*'0'
+      machine = 8 *'0'
     elif line['instruction'] in rtypes:
-      print line
       # Encode an R-type instruction.
-      if line['instruction'] == 'sll' or line['instruction'] == 'sra' or line['instruction'] == 'srl':
-        print op_codes[line['instruction']]
-        print dec_to_bin(0, 5)
-        if line['arg1'] in registers:
-          print registers[line['arg1']]
-        else:
-          print dec_to_bin(line['arg1'], 5)
-        print registers[line['arg0']]
-        if line['arg2'] in registers:
-          print registers[line['arg2']]
-        else:
-          print dec_to_bin(line['arg2'], 5)
-        print function_codes[line['instruction']]
-      else:
-        print op_codes[line['instruction']]
-        print registers[line['arg1']]
-        print registers[line['arg2']]
-        print registers[line['arg0']]
-        print dec_to_bin(0, 5)
-        print function_codes[line['instruction']]
+      machine += dec_to_bin(0, 5)
 
-    else:
-      # Encode a non-R-type instruction.
-      # Hint: the function_codes map will be useful here.
-      print 'Not Implemented'
-      # We'll get you started with jr.
       if line['instruction'] == 'jr':
-        print 'Not Implemented'
-        # Fill out jr.
+          machine += registers[line['arg0']]
+          machine += dec_to_bin(0, 15)
+      elif line['instruction'] == 'sll' or line['instruction'] == 'sra' or line['instruction'] == 'srl':
+        if line['arg1'] in registers:
+          machine += registers[line['arg1']]
+        else:
+          machine += dec_to_bin(line['arg1'], 5)
+        machine += registers[line['arg0']]
+        if line['arg2'] in registers:
+          machine += registers[line['arg2']]
+        else:
+          machine += dec_to_bin(line['arg2'], 5)
+      else:
+        machine += registers[line['arg1']]
+        machine += registers[line['arg2']]
+        machine += registers[line['arg0']]
+        machine += dec_to_bin(0, 5)
 
-      # Finish handling the rest of the instructions (load/store, other jumps).
+      machine += function_codes[line['instruction']]
+
+    elif line['instruction'] in itypes:
+      machine = '1'
+    else:
+      machine += op_codes[line['instruction']]
+      # Encode a J-type instruction.
+      if line['arg0'] in labels:
+        print 'JAL'
+        addr = labels[line['arg0']]
+        machine += dec_to_bin(addr, 32)[6:30]
+        print machine
+      elif line['arg0'] in registers:
+        machine += registers[line['arg0']]
+        machine += dec_to_bin(0, 21)
+      else:
+        machine += dec_to_bin(line['arg0'], 26)
+
+    print bin_to_hex(bin(int(machine, 2)))
+  out.close()
+
+def sign_extend(num, bits):
+  for i in xrange(bits):
+    num = num[0] + num
+  return num
 
 if __name__ == "__main__":
   main()

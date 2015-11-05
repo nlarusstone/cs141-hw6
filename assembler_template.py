@@ -226,8 +226,11 @@ def main():
       if line['arg0'] in labels:
         print 'JAL'
         addr = labels[line['arg0']]
-        machine += dec_to_bin(addr, 32)[6:30]
-        print machine
+        machine = list('00' + dec_to_bin(addr, 32)[0:30])
+        for i in xrange(len(op_codes[line['instruction']])):
+          if op_codes[line['instruction']][i] == '1':
+            machine[i] = '1'
+        machine = "".join(machine)
       elif line['arg0'] in registers:
         machine += registers[line['arg0']]
         machine += dec_to_bin(0, 21)

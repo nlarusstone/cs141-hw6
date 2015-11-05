@@ -5,6 +5,9 @@
 # Usage:
 #    python assembler_template.py [asm file]
 
+# Nicholas Larus-Stone
+# Greg Hewett
+
 import sys, re
 
 def bin_to_hex(x):
